@@ -1,0 +1,18 @@
+# virtual environments
+venv/
+.venv/
+server/venv/
+server/.venv/
+
+# python cache
+__pycache__/
+*.pyc
+
+# vector database
+vectorstore/
+chroma/
+server/vectorstore/
+server/chroma/
+
+# env variables
+.env
