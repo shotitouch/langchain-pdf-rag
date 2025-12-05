@@ -1,38 +1,56 @@
-from fastapi import APIRouter, UploadFile, File
+# routers/ingest.py
+from fastapi import APIRouter, UploadFile
+from tempfile import NamedTemporaryFile
 from langchain_community.document_loaders import PyPDFLoader
-from utils.text_splitter import split_text
-from utils.file import save_temp_pdf, delete_temp_file
-from core.embeddings import embeddings
-from config import PERSIST_DIR
-from langchain_community.vectorstores import Chroma
 
-router = APIRouter(prefix="/ingest", tags=["ingest"])
+from core.retriever import vectorstore   # global Chroma instance
+from utils.text_splitter import split_text
+
+router = APIRouter(prefix="/ingest")
+
 
 @router.post("/")
-async def ingest_pdf(file: UploadFile = File(...)):
-    if file.content_type != "application/pdf":
-        return {"error": "Only PDF files supported."}
+async def ingest_pdf(file: UploadFile):
+    """
+    Upload a PDF → Extract text → Chunk → Store in Chroma
+    with metadata (filename, page number)
+    """
 
-    pdf_bytes = await file.read()
-    temp_path = save_temp_pdf(pdf_bytes)
+    # 1. Save uploaded PDF temporarily
+    with NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
+        tmp.write(await file.read())
+        tmp_path = tmp.name
 
-    loader = PyPDFLoader(temp_path)
-    docs = loader.load()
+    # 2. Load PDF pages
+    loader = PyPDFLoader(tmp_path)
+    pages = loader.load()
 
-    chunks = split_text(docs)
+    texts = []
+    metadatas = []
 
-    vectorstore = Chroma(
-        persist_directory=PERSIST_DIR,
-        embedding_function=embeddings
+    # 3. Convert each page → chunks → store metadata
+    for page_num, page in enumerate(pages):
+        chunks = split_text(page.page_content)
+
+        for chunk in chunks:
+            texts.append(chunk)
+            metadatas.append({
+                "source": file.filename,
+                "page": page_num + 1
+            })
+
+    # 4. Add chunks + metadata to vectorstore
+    vectorstore.add_texts(
+        texts=texts,
+        metadatas=metadatas
     )
 
-    vectorstore.add_documents(chunks)
+    # 5. Persist to disk
     vectorstore.persist()
 
-    delete_temp_file(temp_path)
-
+    # 6. Return summary
     return {
-        "message": "PDF ingested successfully",
-        "pages": len(docs),
-        "chunks_added": len(chunks)
+        "message": f"{file.filename} ingested successfully",
+        "pages": len(pages),
+        "chunks_added": len(texts),
     }

@@ -5,4 +5,4 @@ def split_text(docs):
         chunk_size=500,
         chunk_overlap=100
     )
-    return splitter.split_documents(docs)
+    return splitter.split_text(docs)
