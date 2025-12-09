@@ -1,5 +1,6 @@
 "use client";
 
+import Link from 'next/link'
 import { useState } from "react";
 import { ingestPDF } from "@/lib/api";
 
@@ -22,6 +23,13 @@ export default function UploadPage() {
 
   return (
     <div>
+      <Link
+        href="/"
+        className="inline-block mb-4 text-blue-600 hover:underline"
+      >
+        ← Back
+      </Link>
+      
       <h1 className="text-2xl font-bold mb-4">Upload PDF</h1>
 
       <input

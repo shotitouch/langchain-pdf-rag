@@ -1,5 +1,6 @@
 "use client";
 
+import Link from 'next/link'
 import { useState } from "react";
 import { askQuestion } from "@/lib/api";
 
@@ -38,6 +39,12 @@ export default function ChatPage() {
 
   return (
     <div>
+      <Link
+        href="/"
+        className="inline-block mb-4 text-blue-600 hover:underline"
+      >
+        ← Back
+      </Link>
       <h1 className="text-2xl font-bold mb-4">Chat</h1>
 
       <div className="border rounded p-4 h-[500px] overflow-y-auto bg-white shadow">
