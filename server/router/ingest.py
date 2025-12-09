@@ -46,7 +46,7 @@ async def ingest_pdf(file: UploadFile):
     )
 
     # 5. Persist to disk
-    vectorstore.persist()
+    # vectorstore.persist()
 
     # 6. Return summary
     return {
