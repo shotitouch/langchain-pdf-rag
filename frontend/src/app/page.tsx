@@ -29,6 +29,27 @@ export default function Home() {
             It serves as a portfolio project to demonstrate my skills for AI/ML and software engineering internship roles.
           </p>
         </section>
+        
+        {/* Live Demo Notice */}
+        <section className="w-full border border-amber-300 bg-amber-50 dark:border-amber-700 dark:bg-amber-900/20 p-4 rounded-lg text-sm text-amber-900 dark:text-amber-200">
+          <p className="font-semibold mb-1">
+            ⚠️ Live demo notice (Free-tier hosting)
+          </p>
+          <ul className="list-disc list-inside space-y-1">
+            <li>
+              The backend may take <strong>30–90 seconds</strong> to respond after inactivity
+              (<strong>cold start</strong>).
+            </li>
+            <li>
+              Uploaded documents are stored <strong>temporarily</strong> and may reset after inactivity.
+            </li>
+          </ul>
+          <p className="mt-2 text-amber-800 dark:text-amber-300">
+            This behavior is expected on free-tier infrastructure. Production deployment would use
+            always-on services and persistent storage.
+          </p>
+        </section>
+
 
         {/* About Me Section */}
         <section className="w-full bg-zinc-100 dark:bg-zinc-800 p-5 rounded-lg">
